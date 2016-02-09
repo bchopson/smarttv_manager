@@ -1,14 +1,14 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://bchopson.apiary.io/
 
 # Smart TV Content API
 
 Smart TV Content API is an api that allows users to choose which
 content to display on connected Smart TVs.
 
-## TVs Collection [/tvs]
+## TV Collection [/tvs]
 
-### List All Questions [GET]
+### List All TVs [GET]
 
 + Response 200 (application/json)
 
@@ -20,11 +20,11 @@ content to display on connected Smart TVs.
                         "url": "http://google.com",
                         "duration": 10
                     }, {
-                        "choice": "http://cs.armstrong.edu",
-                        "votes": 20
+                        "url": "http://cs.armstrong.edu",
+                        "duration": 20
                     }, {
-                        "choice": "http://armstrong.edu",
-                        "votes": 10
+                        "url": "http://armstrong.edu",
+                        "duration": 10
                     }
                 ]
             }
@@ -43,11 +43,11 @@ required to point to a specific URL on startup.
                     "url": "http://google.com",
                     "duration": 10
                 }, {
-                    "choice": "http://cs.armstrong.edu",
-                    "votes": 20
+                    "url": "http://cs.armstrong.edu",
+                    "duration": 20
                 }, {
-                    "choice": "http://armstrong.edu",
-                    "votes": 10
+                    "url": "http://armstrong.edu",
+                    "duration": 10
                 }
             ]
         }
@@ -67,11 +67,36 @@ required to point to a specific URL on startup.
                         "url": "http://google.com",
                         "duration": 10
                     }, {
-                        "choice": "http://cs.armstrong.edu",
-                        "votes": 20
+                        "url": "http://cs.armstrong.edu",
+                        "duration": 20
                     }, {
-                        "choice": "http://armstrong.edu",
-                        "votes": 10
+                        "url": "http://armstrong.edu",
+                        "duration": 10
                     }
                 ]
             }
+
+## TV [/tvs/{tv_id}]
+
++ Parameters
+    + tv_id (number) - ID of the TV in the form of an integer
+
+### View a TV detail [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": "1",
+            "slides": [
+                {
+                    "url": "http://google.com",
+                    "duration": 10
+                }, {
+                    "url": "http://cs.armstrong.edu",
+                    "duration": 20
+                }, {
+                    "url": "http://armstrong.edu",
+                    "duration": 10
+                }
+            ]
+        }
