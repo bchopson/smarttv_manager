@@ -1,7 +1,15 @@
 # smarttv_manager
 Django project for managing smart TV content.
 
-Create a virtualenv and run  
-```pip install -r requirements.txt```
+Create a virtualenv (see <http://www.jeffknupp.com/blog/2013/12/18/starting-a-django-16-project-the-right-way/>)
 
-Note: Windows users will need to install Visual C++ tools for Python27. Just try googling it.
+and run ```pip install -r requirements.txt```
+
+Note: Windows users will need to first install Visual C++ tools for Python27:
+
+<https://www.microsoft.com/en-us/download/details.aspx?id=44266>
+
+Next, run ```python manage.py migrate``` and ```python manage.py createsuperuser``` to create the database.  
+Now, run the project using ```python manage.py runserver 8000``` to start the project on port 8000.
+
+Wagtail will be at <http://localhost:8000/cms/>.
