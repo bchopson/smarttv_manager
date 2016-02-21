@@ -11,4 +11,4 @@ class Slide(models.Model):
     url = models.URLField(max_length=200)
     duration = models.IntegerField(default=0)
     def __str__(self):
-        return self.url
+        return "[tv=%s, url=%s, duration=%s]" % (self.tv.id, self.url, self.duration)
