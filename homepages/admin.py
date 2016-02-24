@@ -2,5 +2,8 @@ from django.contrib import admin
 
 from .models import Tv, Slide
 
-admin.site.register(Tv)
+class TvAdmin(admin.ModelAdmin):
+    readonly_fields = ('updated',)
+
+admin.site.register(Tv,TvAdmin)
 admin.site.register(Slide)
