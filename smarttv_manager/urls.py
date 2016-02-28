@@ -18,6 +18,7 @@ from django.contrib import admin
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
+from homepages import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -25,4 +26,8 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
     url(r'^pages/', include(wagtail_urls)),
     url(r'^homepages/', include('homepages.urls')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/tvs/$', views.tv_list),
+    url(r'^api/tvs/(?P<pk>[0-9]+)/$', views.tv_detail),
 ]

@@ -1,8 +1,14 @@
 from django.core import serializers
 from django.http import HttpResponse
 from django.template import loader
+from django.views.decorators.csrf import csrf_exempt
 
-from homepages.models import Slide
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+
+from homepages.models import Slide, Tv
+from homepages.serializers import TvSerializer
+
 
 def index(request, tv_id):
     slides = Slide.objects.filter(tv__id=int(tv_id))
@@ -14,3 +20,58 @@ def index(request, tv_id):
     }
     return HttpResponse(template.render(context, request))
 
+
+@csrf_exempt
+def tv_list(request):
+    """
+    List all Tvs, or create a new Tv.
+    """
+    if request.method == 'GET':
+        tvs = Tv.objects.all()
+        serializer = TvSerializer(tvs, many=True)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TvSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def tv_detail(request, pk):
+    """
+    Retrieve, update or delete a Tv.
+    """
+    try:
+        tv = Tv.objects.get(pk=pk)
+    except Tv.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = TvSerializer(tv)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = TvSerializer(tv, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        tv.delete()
+        return HttpResponse(status=204)
+
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
