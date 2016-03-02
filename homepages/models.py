@@ -11,6 +11,7 @@ class Tv(models.Model):
 
 
 class Slide(models.Model):
+    index = models.IntegerField(default=0)
     tv = models.ForeignKey(Tv, on_delete=models.CASCADE)
     url = models.URLField(max_length=200)
     duration = models.IntegerField(default=0)
@@ -21,3 +22,6 @@ class Slide(models.Model):
 
     def __str__(self):
         return "[tv=%s, url=%s, duration=%s]" % (self.tv.id, self.url, self.duration)
+
+    class Meta:
+        ordering = ['index']
