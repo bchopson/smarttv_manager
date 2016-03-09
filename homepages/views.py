@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from homepages.models import Slide, Tv
-from homepages.serializers import TvSerializer
+from homepages.serializers import TvSerializer, SlideSerializer, SlideChildSerializer
 
 
 def index(request, tv_id):
@@ -65,6 +65,31 @@ def tv_detail(request, pk):
     elif request.method == 'DELETE':
         tv.delete()
         return HttpResponse(status=204)
+
+
+# Not adding bulk delete for now
+@csrf_exempt
+def slides(request, pk):
+    """
+    Retrieve, update or delete slides for a given TV
+    """
+    try:
+        slides = Slide.objects.filter(tv__id=pk)
+    except Tv.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = SlideSerializer(slides, many=True)
+        return JSONResponse(serializer.data)
+
+    # bulk update
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = SlideChildSerializer(slides, data=data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
 
 
 class JSONResponse(HttpResponse):

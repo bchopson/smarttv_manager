@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/tvs/$', views.tv_list),
     url(r'^api/tvs/(?P<pk>[0-9]+)/$', views.tv_detail),
+    url(r'^api/tvs/(?P<pk>[0-9]+)/slides/$', views.slides),
 ]

@@ -12,7 +12,7 @@ class Tv(models.Model):
 
 class Slide(models.Model):
     index = models.IntegerField(default=0)
-    tv = models.ForeignKey(Tv, on_delete=models.CASCADE)
+    tv = models.ForeignKey(Tv, on_delete=models.CASCADE, related_name='slides')
     url = models.URLField(max_length=200)
     duration = models.IntegerField(default=0)
 
