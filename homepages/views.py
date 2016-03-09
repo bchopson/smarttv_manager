@@ -56,7 +56,7 @@ def tv_detail(request, pk):
 
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
-        serializer = TvSerializer(tv, data=data)
+        serializer = TvSerializer(tv, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JSONResponse(serializer.data)
@@ -68,7 +68,7 @@ def tv_detail(request, pk):
 
 
 @csrf_exempt
-def slides(request, pk):
+def slide_list(request, pk):
     """
     Retrieve or create slides for a given TV
     """
@@ -88,6 +88,34 @@ def slides(request, pk):
             serializer.save(tv=Tv.objects.get(id=pk))
             return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def slide_detail(request, pk, idx):
+    """
+    Retrieve, update or delete a slide.
+    """
+    try:
+        tv = Tv.objects.get(pk=pk)
+        slide = Slide.objects.get(index=idx, tv=tv)
+    except Tv.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = SlideSerializer(slide)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = SlideSerializer(slide, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        slide.delete()
+        return HttpResponse(status=204)
 
 
 class JSONResponse(HttpResponse):
