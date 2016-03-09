@@ -21,7 +21,9 @@ class Slide(models.Model):
         super(Slide, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "[tv=%s, url=%s, duration=%s]" % (self.tv.id, self.url, self.duration)
+        return "[index=%s, tv=%s, url=%s, duration=%s]" % (self.index, self.tv.id,
+                                                           self.url, self.duration)
 
     class Meta:
         ordering = ['index']
+        unique_together = (("index", "tv"))

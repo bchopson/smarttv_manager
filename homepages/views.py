@@ -67,11 +67,10 @@ def tv_detail(request, pk):
         return HttpResponse(status=204)
 
 
-# Not adding bulk delete for now
 @csrf_exempt
 def slides(request, pk):
     """
-    Retrieve, update or delete slides for a given TV
+    Retrieve or create slides for a given TV
     """
     try:
         slides = Slide.objects.filter(tv__id=pk)
@@ -82,13 +81,12 @@ def slides(request, pk):
         serializer = SlideSerializer(slides, many=True)
         return JSONResponse(serializer.data)
 
-    # bulk update
-    elif request.method == 'PUT':
+    elif request.method == 'POST':
         data = JSONParser().parse(request)
-        serializer = SlideChildSerializer(slides, data=data, many=True)
+        serializer = SlideChildSerializer(data=data, many=True)
         if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data)
+            serializer.save(tv=Tv.objects.get(id=pk))
+            return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)
 
 

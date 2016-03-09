@@ -13,7 +13,7 @@ class SlideChildSerializer(serializers.ModelSerializer):
         fields = ('index', 'url', 'duration')
 
 class TvSerializer(serializers.ModelSerializer):
-    slides = SlideChildSerializer(many=True, read_only=True)
+    slides = SlideChildSerializer(many=True)
 
     class Meta:
         model = Tv
