@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'compressor',
     'taggit',
     'rest_framework',
+    'rest_framework_docs',
 ]
 
 MIDDLEWARE_CLASSES = [

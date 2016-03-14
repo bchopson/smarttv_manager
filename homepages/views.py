@@ -2,9 +2,11 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
 
 from homepages.models import Slide, Tv
 from homepages.serializers import TvSerializer, SlideSerializer, SlideChildSerializer
@@ -21,17 +23,16 @@ def index(request, tv_id):
     return HttpResponse(template.render(context, request))
 
 
-@csrf_exempt
-def tv_list(request):
+class TvList(APIView):
     """
     List all Tvs, or create a new Tv.
     """
-    if request.method == 'GET':
+    def get(self, request):
         tvs = Tv.objects.all()
         serializer = TvSerializer(tvs, many=True)
         return JSONResponse(serializer.data)
 
-    elif request.method == 'POST':
+    def post(self, request):
         data = JSONParser().parse(request)
         serializer = TvSerializer(data=data)
         if serializer.is_valid():
@@ -40,21 +41,20 @@ def tv_list(request):
         return JSONResponse(serializer.errors, status=400)
 
 
-@csrf_exempt
-def tv_detail(request, pk):
-    """
-    Retrieve, update or delete a Tv.
-    """
-    try:
-        tv = Tv.objects.get(pk=pk)
-    except Tv.DoesNotExist:
-        return HttpResponse(status=404)
+class TvDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Tv.objects.get(pk=pk)
+        except Tv.DoesNotExist:
+            return HttpResponse(status=404)
 
-    if request.method == 'GET':
+    def get(self, request, pk):
+        tv = self.get_object(pk)
         serializer = TvSerializer(tv)
         return JSONResponse(serializer.data)
 
-    elif request.method == 'PUT':
+    def put(self, request, pk):
+        tv = self.get_object(pk)
         data = JSONParser().parse(request)
         serializer = TvSerializer(tv, data=data, partial=True)
         if serializer.is_valid():
@@ -62,26 +62,28 @@ def tv_detail(request, pk):
             return JSONResponse(serializer.data)
         return JSONResponse(serializer.errors, status=400)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk):
+        tv = self.get_object(pk)
         tv.delete()
         return HttpResponse(status=204)
 
 
-@csrf_exempt
-def slide_list(request, pk):
+class SlideList(APIView):
     """
     Retrieve or create slides for a given TV
     """
-    try:
-        slides = Slide.objects.filter(tv__id=pk)
-    except Tv.DoesNotExist:
-        return HttpResponse(status=404)
+    def get_list(self, pk):
+        try:
+            return Slide.objects.filter(tv__id=pk)
+        except Tv.DoesNotExist:
+            return HttpResponse(status=404)
 
-    if request.method == 'GET':
+    def get(self, request, pk):
+        slides = self.get_list(pk)
         serializer = SlideSerializer(slides, many=True)
         return JSONResponse(serializer.data)
 
-    elif request.method == 'POST':
+    def post(self, request, pk):
         data = JSONParser().parse(request)
         serializer = SlideChildSerializer(data=data, many=True)
         if serializer.is_valid():
@@ -90,30 +92,33 @@ def slide_list(request, pk):
         return JSONResponse(serializer.errors, status=400)
 
 
-@csrf_exempt
-def slide_detail(request, pk, idx):
+class SlideDetail(APIView):
     """
     Retrieve, update or delete a slide.
     """
-    try:
-        tv = Tv.objects.get(pk=pk)
-        slide = Slide.objects.get(index=idx, tv=tv)
-    except Tv.DoesNotExist:
-        return HttpResponse(status=404)
+    def get_object(self, pk, idx):
+        try:
+            tv = Tv.objects.get(pk=pk)
+            return Slide.objects.get(index=idx, tv=tv)
+        except (Tv.DoesNotExist, Slide.DoesNotExist):
+            return HttpResponse(status=404)
 
-    if request.method == 'GET':
+    def get(self, request, pk, idx):
+        slide = self.get_object(pk, idx);
         serializer = SlideSerializer(slide)
         return JSONResponse(serializer.data)
 
-    elif request.method == 'PUT':
+    def put(self, request, pk, idx):
         data = JSONParser().parse(request)
+        slide = self.get_object(pk, idx)
         serializer = SlideSerializer(slide, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JSONResponse(serializer.data)
         return JSONResponse(serializer.errors, status=400)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, idx):
+        slide = self.get_object(pk, idx)
         slide.delete()
         return HttpResponse(status=204)
 

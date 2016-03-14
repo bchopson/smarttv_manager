@@ -26,10 +26,7 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
     url(r'^pages/', include(wagtail_urls)),
     url(r'^homepages/', include('homepages.urls')),
+    url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/tvs/$', views.tv_list),
-    url(r'^api/tvs/(?P<pk>[0-9]+)$', views.tv_detail),
-    url(r'^api/tvs/(?P<pk>[0-9]+)/slides/$', views.slide_list),
-    url(r'^api/tvs/(?P<pk>[0-9]+)/slides/(?P<idx>[0-9]+)$', views.slide_detail),
+    url(r'^api/', include('homepages.api', namespace='api')),
 ]
