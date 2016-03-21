@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Homepage</title>
+<style type="text/css">
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+iframe { border: none; }
+</style>
+<script type="text/javascript">
+var Slide = {
+    nextIndex: 0,
+
+    slides: {{ slides|safe }},
+
+    display: function()
+    {
+        var slide = Slide.slides[Slide.nextIndex];
+        frames["displayArea"].location.href = slide.fields.url;
+        Slide.nextIndex = (Slide.nextIndex + 1) % Slide.slides.length;
+        setTimeout(Slide.display, slide.fields.duration * 1000);
+    }
+};
+
+window.onload = Slide.display;
+</script>
+</head>
+<body>
+<iframe name="displayArea" width="100%" height="100%"></iframe>
+</body>
+</html>

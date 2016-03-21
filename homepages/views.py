@@ -1,24 +1,30 @@
 from django.core import serializers
 from django.http import HttpResponse
 from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
-
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from homepages.models import Slide, Tv
 from homepages.serializers import TvSerializer, SlideSerializer, SlideChildSerializer
 
 
-def index(request, tv_id):
+def homepage(request, tv_id):
     slides = Slide.objects.filter(tv__id=int(tv_id))
     # TODO: Change this to use rest api instead...
     slides_json = serializers.serialize('json', slides, fields=('url', 'duration'))
-    template = loader.get_template('homepages/index.html')
+    template = loader.get_template('homepages/homepage.html')
     context = {
         'slides': slides_json,
+    }
+    return HttpResponse(template.render(context, request))
+
+def index(request):
+    # TODO: provide list of TVs from db
+    tvs = Tv.objects.all()
+    template = loader.get_template('homepages/index.html')
+    context = {
+        'tvs': tvs,
     }
     return HttpResponse(template.render(context, request))
 
@@ -42,6 +48,9 @@ class TvList(APIView):
 
 
 class TvDetail(APIView):
+    """
+    Retrieve, update or delete a tv.
+    """
     def get_object(self, pk):
         try:
             return Tv.objects.get(pk=pk)
