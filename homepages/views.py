@@ -28,6 +28,10 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+def editor(request):
+    template = loader.get_template('homepages/editor.html')
+    return HttpResponse(template.render(request))
+
 
 class TvList(APIView):
     """

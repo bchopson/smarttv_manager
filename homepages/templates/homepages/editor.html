@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="editorApp">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>Editor</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.js"></script>
+    <script src="{% static 'homepages/editor.js' %}"></script>
+</head>
+<body>
+  {% verbatim %}
+  <div ng-controller="EditorCtrl">
+    <select ng-if="currentTv != null" ng-options="tv.id for tv in tvs track by tv.id" ng-model="currentTv"></select>
+  </div>
+  {% endverbatim %}
+</body>
+</html>
