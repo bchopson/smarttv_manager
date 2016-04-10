@@ -22,6 +22,41 @@ var Slide = {
 };
 
 window.onload = Slide.display;
+
+var tv_id = {{ tv_id }};
+
+var last_updated = '';
+
+function check(old_updated) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/api/tvs/" + tv_id, true);
+    xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                last_updated = JSON.parse(xhr.responseText).updated;
+                // Check against empty string for initial run, since there is
+                // nothing to compare the timestamp to.
+                if (old_updated !== '' && old_updated !== last_updated) {
+                    window.location.reload();
+                }
+            } else {
+                console.error(xhr.statusText);
+            }
+        }
+    };
+    xhr.onerror = function (e) {
+        console.error(xhr.statusText);
+    };
+
+    xhr.send(null);
+}
+
+check(last_updated);
+
+(function poll() {
+    check(last_updated);
+    setTimeout(poll, 10000);
+})();
 </script>
 </head>
 <body>
