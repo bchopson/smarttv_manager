@@ -11,11 +11,11 @@ from homepages.serializers import TvSerializer, SlideSerializer, SlideChildSeria
 
 def homepage(request, tv_id):
     slides = Slide.objects.filter(tv__id=int(tv_id))
-    # TODO: Change this to use rest api instead...
     slides_json = serializers.serialize('json', slides, fields=('url', 'duration'))
     template = loader.get_template('homepages/homepage.html')
     context = {
         'slides': slides_json,
+        'tv_id': tv_id,
     }
     return HttpResponse(template.render(context, request))
 
