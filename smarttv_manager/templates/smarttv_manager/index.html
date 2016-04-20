@@ -5,6 +5,7 @@
     <title>Smart TV Manager - Menu</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/sandstone/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QqZs0aSOGFan3GWVdP4PyCBp6icaF/4n8Q+wsmZUTiiVIqE4r4tFYcb8Osf+8y45" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
     integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </head>
@@ -20,7 +21,7 @@
                 <a href="admin"><button class="btn btn-info btn-lg btn-block">Configure TVs</button></a>
             </div>
             <div class="col-md-4">
-                <a href="homepages"><button class="btn btn-info btn-lg btn-block">Preview</button></a>
+                <a href="homepages"><button class="btn btn-info btn-lg btn-block">Docs</button></a>
             </div>
         </div>
         <div class="row" style="padding-top: 2em;">
@@ -31,8 +32,19 @@
                 <p class="text-muted">A raw, advanced interface for changing details about TVs in the database.</p>
             </div>
             <div class="col-md-4">
-                <p class="text-muted">Lists the available screens and gives access to the content assigned to them.</p>
+                <p class="text-muted">Instructions on how to operate the web app.</p>
             </div>
+        </div>
+    </div>
+    <div class="container">
+        <h2 class="text-center">TVs</h2>
+        <div class="row">
+            {% for tv in tvs %}
+            <a href="/homepages/{{ tv.id }}"><div class="col-md-4 text-center">
+                <i class="media-object fa fa-television" style="font-size: 8em"></i>
+                <p class="text-muted">{{ tv.description }}</p>
+            </div></a>
+            {% endfor %}
         </div>
     </div>
 </body>
