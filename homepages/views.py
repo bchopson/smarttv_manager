@@ -33,6 +33,10 @@ def editor(request):
     return HttpResponse(template.render(request))
 
 
+def readme(request):
+    template = loader.get_template('homepages/readme.html')
+    return HttpResponse(template.render(request))
+
 class TvList(APIView):
     """
     List all Tvs, or create a new Tv.
