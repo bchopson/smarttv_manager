@@ -136,8 +136,11 @@ class SlideDetail(APIView):
 
     def delete(self, request, pk, idx):
         slide = self.get_object(pk, idx)
-        slide.delete()
-        return HttpResponse(status=204)
+        try:
+            slide.delete()
+            return HttpResponse(status=204)
+        except (Tv.DoesNotExist, Slide.DoesNotExist):
+            return HttpResponse(status=404)
 
 
 class JSONResponse(HttpResponse):
