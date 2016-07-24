@@ -6,6 +6,8 @@
     <title>Editor</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/sandstone/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QqZs0aSOGFan3GWVdP4PyCBp6icaF/4n8Q+wsmZUTiiVIqE4r4tFYcb8Osf+8y45" crossorigin="anonymous">
+    <!-- Font Awesome by Dave Gandy - http://fontawesome.io -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-1.12.2.min.js"
             integrity="sha256-lZFHibXzMHo3GGeehn1hudTAP3Sc0uKXBXAzHX1sjtk=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
@@ -19,6 +21,7 @@
 <body>
   {% verbatim %}
   <div class="container-fluid" ng-controller="EditorCtrl as editor">
+    <h1 class="text-center">Edit Slides</h1>
     <div class="form">
       <div class="form-group">
         <label class="control-label">Select TV</label>
@@ -28,11 +31,28 @@
         </select>
       </div>
     </div>
+    <label class="control-label">Edit</label>
     <ul class="list-group" dnd-list="editor.currentTv.slides">
       <li class="list-group-item" ng-repeat="slide in editor.currentTv.slides"
         dnd-draggable="slide" dnd-effect-allowed="move"
         dnd-moved="editor.moveSlide($index, slide.index)">
+        <span class="fa fa-bars fa-lg"></span><span>&nbsp;</span>
         <a href="{{slide.url}}">{{slide.url}}</a>
+        <button type="button" class="btn btn-sm btn-warning pull-right"
+          ng-click="editor.deleteSlide($index, slide.index)">Delete</button>
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-8">
+            <input class="form-control" type="url" ng-model="editor.newSlide.url" placeholder="Slide Url" />
+          </div>
+          <div class="col-md-2">
+            <input class="form-control" type="number" ng-model="editor.newSlide.duration" placeholder="Duration (seconds)" />
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-sm btn-default pull-right" ng-click="editor.addSlide()">Add</button>
+          </div>
+        <div>
       </li>
     </ul>
   </div>

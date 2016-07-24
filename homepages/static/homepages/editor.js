@@ -28,28 +28,52 @@ var EditorCtrl = editorApp.controller('EditorCtrl', ['Slides', 'SlidesDetail', '
 function(Slides, SlidesDetail, Tvs) {
   var self = this;
   self.tvs = [];
-  self.slides = [];
   self.currentTv = null;
+  self.newSlide = {};
 
-  Tvs.query().$promise.then(function(data) {
-    self.tvs = data;
-    self.currentTv = self.tvs[0];
-  });
+  function getTvs() {
+    Tvs.query().$promise.then(function(data) {
+      self.tvs = data;
+      self.currentTv = self.tvs[0];
+    });
+  }
 
-  self.moveSlide = function(index, oldIndex) {
+  getTvs();
+
+  self.moveSlide = function (index, oldIndex) {
+    var detailsParams;
+    var slidesParams = { ids: self.currentTv.id };
     self.currentTv.slides.splice(index, 1);
-    self.clearSlides();
-    for (var i = 0; i < self.currentTv.slides.length; i++) {
-      self.currentTv.slides[i].index = i;
-    }
-    var params = { ids: self.currentTv.id };
-    Slides.save(params, self.currentTv.slides);
+    Slides.delete(slidesParams, function () {
+      for (var i = 0; i < self.currentTv.slides.length; i++) {
+        detailsParams = { ids: self.currentTv.id, idx: self.currentTv.slides[i].index };
+        self.currentTv.slides[i].index = i;
+      }
+      Slides.save(slidesParams, self.currentTv.slides);
+    }, function () {
+      alert('Sorry, something went wrong.');
+    });
   };
 
-  self.clearSlides = function () {
-    for (var i = 0; i < self.currentTv.slides.length; i++) {
-      var params = { ids: self.currentTv.id, idx: self.currentTv.slides[i].index };
-      SlidesDetail.delete(params);
-    }
+  self.deleteSlide = function (listIndex, index) {
+    var params = { ids: self.currentTv.id, idx: index };
+    SlidesDetail.delete(params, function () {
+      self.currentTv.slides.splice(listIndex, 1);
+      self.tvs[self.currentTv.id - 1].slides = self.currentTv.slides;
+    }, function () {
+      alert('Sorry, something went wrong.');
+    });
+  };
+
+  self.addSlide = function () {
+    var lastSlide = self.currentTv.slides[self.currentTv.slides.length - 1];
+    self.newSlide.index = lastSlide.index + 1;
+    var params = { ids: self.currentTv.id };
+    Slides.save(params, [self.newSlide], function () {
+      self.newSlide.tv = self.currentTv.id;
+      self.currentTv.slides.push(self.newSlide);
+    }, function () {
+      alert('Sorry, something went wrong.');
+    });
   };
 }]);
