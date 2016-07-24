@@ -103,10 +103,16 @@ class SlideList(APIView):
     def post(self, request, pk):
         data = JSONParser().parse(request)
         serializer = SlideChildSerializer(data=data, many=True)
+
         if serializer.is_valid():
             serializer.save(tv=Tv.objects.get(id=pk))
             return JSONResponse(serializer.data, status=201)
+
         return JSONResponse(serializer.errors, status=400)
+
+    def delete(self, request, pk):
+        Slide.objects.filter(tv__id=pk).delete()
+        return HttpResponse(status=204)
 
 
 class SlideDetail(APIView):
@@ -121,7 +127,7 @@ class SlideDetail(APIView):
             return HttpResponse(status=404)
 
     def get(self, request, pk, idx):
-        slide = self.get_object(pk, idx);
+        slide = self.get_object(pk, idx)
         serializer = SlideSerializer(slide)
         return JSONResponse(serializer.data)
 
@@ -136,8 +142,11 @@ class SlideDetail(APIView):
 
     def delete(self, request, pk, idx):
         slide = self.get_object(pk, idx)
-        slide.delete()
-        return HttpResponse(status=204)
+        try:
+            slide.delete()
+            return HttpResponse(status=204)
+        except (Tv.DoesNotExist, Slide.DoesNotExist):
+            return HttpResponse(status=404)
 
 
 class JSONResponse(HttpResponse):
